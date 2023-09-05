@@ -1,12 +1,5 @@
 #!/bin/bash
 
-# Verifica se o curl está instalado, e se não estiver, instala-o
-if ! command -v curl &> /dev/null; then
-    echo "O comando 'curl' não está instalado. Instalando..."
-    sudo apt-get update
-    sudo apt-get install curl -y
-fi
-
 # Obtém o IP público da VPS automaticamente
 VPS_IP=$(curl -s ifconfig.me)
 
