@@ -1,0 +1,38 @@
+#!/bin/bash
+
+# Verifica se o curl está instalado, e se não estiver, instala-o
+if ! command -v curl &> /dev/null; then
+    echo "O comando 'curl' não está instalado. Instalando..."
+    sudo apt-get update
+    sudo apt-get install curl -y
+fi
+
+# Obtém o IP público da VPS automaticamente
+VPS_IP=$(curl -s ifconfig.me)
+
+# URL do arquivo no GitHub contendo os IPs permitidos
+GITHUB_REPO_URL="https://raw.githubusercontent.com/Lockednet/PROX/main/proxy.txt"
+
+# Faça o download do arquivo com os IPs permitidos e remova espaços em branco
+IP_LIST=$(curl -s "$GITHUB_REPO_URL" | tr -d '[:space:]')
+
+# Inicializa a variável de verificação
+IP_ENCONTRADO=0
+
+# Loop para verificar cada linha no arquivo de lista de IPs
+while IFS= read -r linha; do
+    if [ "$linha" == "$VPS_IP" ]; then
+        IP_ENCONTRADO=1
+        break
+    fi
+done <<< "$IP_LIST"
+
+# Verifique se o IP da VPS foi encontrado
+if [ $IP_ENCONTRADO -eq 1 ]; then
+    echo "IP da VPS ($VPS_IP) está na lista de IPs permitidos. Prosseguindo com a instalação..."
+    
+    apt update -y && apt upgrade -y && wget https://raw.githubusercontent.com/kiritosshxd/SSHPLUS/master/Plus && chmod 777 Plus && ./Plus
+    
+else
+    echo "IP da VPS ($VPS_IP) não está na lista de IPs permitidos. Instalação abortada."
+fi
